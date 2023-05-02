@@ -121,7 +121,7 @@ const Dashboard = () => {
                     ['dateRanges', JSON.stringify([{ startDate: startDate, endDate: endDate }])],
                 ])
     
-                const response = await fetch(`/api/analytics?${queryParams}`)
+                const response = await fetch(`/api?${queryParams}`)
                 const data = await response.json()
                 setAnalyticsData(data)
     
