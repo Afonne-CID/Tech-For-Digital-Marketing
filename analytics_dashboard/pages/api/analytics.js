@@ -24,7 +24,7 @@ const auth = new GoogleAuth({
 });
 
 
-module.exports = async (request, response) => {
+export default async (request, response) => {
 
     try {
 
