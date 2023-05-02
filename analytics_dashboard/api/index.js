@@ -27,7 +27,7 @@ const auth = new GoogleAuth({
 });
 
 
-api.get('/api', async (request, response) => {
+app.get('/api', async (request, response) => {
 
     try {
 
