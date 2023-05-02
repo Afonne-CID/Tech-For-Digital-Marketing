@@ -1,21 +1,20 @@
+require('dotenv').config();
 
-// // For localhost
-// const express = require('express');
-// const { GoogleAuth } = require('google-auth-library');
-// const { BetaAnalyticsDataClient } = require('@google-analytics/data');
+const express = require('express');
+const { GoogleAuth } = require('google-auth-library');
+const { BetaAnalyticsDataClient } = require('@google-analytics/data');
 
-// const app = express();
-// app.use(express.urlencoded({ extended: true }));
-// app.use(express.json());
+const app = express();
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
-// const propertyId = process.env.PROPERTY_ID;
+const propertyId = process.env.PROPERTY_ID;
+
 // const port = process.env.PORT || 3001
-
 // app.listen(port, () => {
 //     console.log(`Server listening at http://localhost:${port}`)
 // })
 
-require('dotenv').config();
 
 const credentialsJson = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
 const auth = new GoogleAuth({
@@ -24,7 +23,7 @@ const auth = new GoogleAuth({
 });
 
 
-export default async (request, response) => {
+api.get('/api', async (request, response) => {
 
     try {
 
@@ -46,4 +45,6 @@ export default async (request, response) => {
         console.log(error);
         response.status(500).json({message: error})
     }
-};
+});
+
+module.exports = app;
