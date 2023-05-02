@@ -1,8 +1,12 @@
-require('dotenv').config();
+// require('dotenv').config();
+// const express = require('express');
+// const { GoogleAuth } = require('google-auth-library');
+// const { BetaAnalyticsDataClient } = require('@google-analytics/data');
 
-const express = require('express');
-const { GoogleAuth } = require('google-auth-library');
-const { BetaAnalyticsDataClient } = require('@google-analytics/data');
+import 'dotenv/config';
+import express from 'express';
+import { GoogleAuth } from 'google-auth-library';
+import { BetaAnalyticsDataClient } from '@google-analytics/data';
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
