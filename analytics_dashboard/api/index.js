@@ -3,6 +3,12 @@
 // const { GoogleAuth } = require('google-auth-library');
 // const { BetaAnalyticsDataClient } = require('@google-analytics/data');
 
+// const port = process.env.PORT || 3001
+// app.listen(port, () => {
+//     console.log(`Server listening at http://localhost:${port}`)
+// })
+
+
 import 'dotenv/config';
 import express from 'express';
 import { GoogleAuth } from 'google-auth-library';
@@ -13,12 +19,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 const propertyId = process.env.PROPERTY_ID;
-
-// const port = process.env.PORT || 3001
-// app.listen(port, () => {
-//     console.log(`Server listening at http://localhost:${port}`)
-// })
-
 
 const credentialsJson = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
 const auth = new GoogleAuth({
@@ -51,4 +51,4 @@ app.get('/api', async (request, response) => {
     }
 });
 
-module.exports = app;
+export default app;
