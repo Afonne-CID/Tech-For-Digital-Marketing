@@ -115,8 +115,7 @@ const Dashboard = () => {
 
             try {
                 const queryParams = new URLSearchParams([
-                    ['metrics', JSON.stringify([{ name: metric }])
-                    ],
+                    ['metrics', JSON.stringify([{ name: metric }])],
                     ['dimensions', JSON.stringify([{ name: 'country' }])],
                     ['dateRanges', JSON.stringify([{ startDate: startDate, endDate: endDate }])],
                 ])

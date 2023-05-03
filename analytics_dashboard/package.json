@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "start": "concurrently \"node server/server.js\" \"vite\""
+    "start": "concurrently \"node api/index.js\" \"vite\""
   },
   "dependencies": {
     "@google-analytics/data": "^3.2.2",

@@ -31,9 +31,9 @@ app.get('/api', async (request, response) => {
 
     try {
 
-        metrics = JSON.parse(request.query.metrics || '[]');
-        dimensions = JSON.parse(request.query.dimensions || '[]');
-        dateRanges = JSON.parse(request.query.dateRanges || '[]')
+        const metrics = JSON.parse(request.query.metrics || '[]');
+        const dimensions = JSON.parse(request.query.dimensions || '[]');
+        const dateRanges = JSON.parse(request.query.dateRanges || '[]')
         
         const analyticsDataClient = new BetaAnalyticsDataClient({ auth });
         const res = await analyticsDataClient.runReport({
