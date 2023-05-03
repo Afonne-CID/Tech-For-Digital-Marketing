@@ -1,6 +1,8 @@
 # Google Analytics Dashboard
 This project is a simple Google Analytics Dashboard that fetches data using the Google Analytics Data API and displays the information in a table. It allows users to select a date range, a specific metric, and fetches the data accordingly.
 
+Live link => [Google Analytics Dashboard](https://google-analytics-dashboard-amber.vercel.app/)
+
 ## Features
 * Display Google Analytics data in a table
 * Select a date range for the data
