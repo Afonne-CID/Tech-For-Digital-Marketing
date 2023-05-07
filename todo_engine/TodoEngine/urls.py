@@ -28,6 +28,7 @@ router.register(r'tasks', views.TaskViewSet)
 urlpatterns = [
     path('superAdmin/', admin.site.urls),
     path('api/', include(router.urls)),
-    path('api/register', views.register),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('api/login/', views.login),
+    path('api/register/', views.register),
+    # path('api/login', include('rest_framework.urls', namespace='rest_framework')),
 ]

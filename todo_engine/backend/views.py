@@ -1,4 +1,6 @@
 from django.contrib.auth.models import User, Group
+from rest_framework.authtoken.models import Token
+from django.contrib.auth import authenticate, login as auth_login
 from rest_framework import permissions
 from rest_framework import viewsets
 from rest_framework import status
@@ -11,16 +13,30 @@ from backend.serializers import (
     CategorySerializer,
     TaskSerializer)
 
+
+@api_view(['POST'])
+def login(request):
+    username = request.data.get('username')
+    password = request.data.get('password')
+
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        auth_login(request, user)
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response({"token": token.key, "detail": "Login successful"}, status=status.HTTP_200_OK)
+    else:
+        return Response({"detail": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+
 @api_view(['POST'])
 def register(request):
-    serializer = UserSerializer(data=request.data)
+    serializer = UserSerializer(data=request.data, context={'request': request})
     if serializer.is_valid():
         serializer.save()
-        group = Group.objects.filter('free').first()
+        group = Group.objects.filter(name='free').first()
         if not group:
             group = Group.objects.create(name='free')
-        serializer.groups.add(group)
-        serializer.save()
+        serializer.instance.groups.add(group)
+        serializer.instance.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
