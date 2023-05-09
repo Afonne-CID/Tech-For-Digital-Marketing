@@ -14,21 +14,24 @@ const Task = ({ task, sn, bgColor, onAction }) => {
           : description.substring(0, length) + " ...";
       };
       
-
     const handleDelete = async () => {
         await deleteTask(task.id);
         onAction();
     }
     
     const handleUpdate = async () => {
+        if(showUpdateForm) {
+            onAction();
+        }
         setShowUpdateForm(!showUpdateForm)
-        // onAction();
     }
     
     const handleToggleCompletion = async () => {
         await toggleTaskCompletion(task.id);
         onAction();
     }
+
+    const categoryName = task.category ? task.category.name : '';
 
     return (
         <div className='flex flex-col justify-center items-center'>
@@ -41,7 +44,7 @@ const Task = ({ task, sn, bgColor, onAction }) => {
                         <p className='p-2'>{task.title}</p>
                     </div>
                     <div className='flex items-center rounded-md bg-red-400 shadow-sm shadow-black'>
-                        <p className='p-[2px]'>{task.category}</p>
+                        <p className='p-[2px]'>{categoryName}</p>
                     </div>
                     <div>
                         <p className="p-2">

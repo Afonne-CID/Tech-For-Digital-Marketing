@@ -15,7 +15,7 @@ class Category(models.Model):
 class Task(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True, null=True)
-    due_date = models.DateField()
+    due_date = models.DateField(null=True, blank=True)
     completed = models.BooleanField(default=False)
     created_at = models.DateField(default=dj_timezone.now)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, blank=True, null=True)

@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
-import { saveToDatabase } from '../helpers'
+import React, { useEffect, useState } from 'react'
+import Select from 'react-select'
+import { saveToDatabase, getCategories } from '../helpers'
 import Button from './Button'
 
 
@@ -9,6 +10,7 @@ const AddTask = ({ onAddTask }) => {
     const [taskTitle, setTaskTitle] = useState('')
     const [taskDescription, setTaskDescription] = useState('')
     const [taskCategory, setTaskCategory] = useState('')
+    const [categories, setCategories] = useState([])
 
     const handleAddTask = async () => {
 
@@ -32,7 +34,20 @@ const AddTask = ({ onAddTask }) => {
             setTaskDescription('')
             setTaskCategory('')
         }
-      }
+    }
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            const data = await getCategories()
+            setCategories(data)
+        }
+
+        fetchCategories()
+    }, [])
+
+    const getSelectOptions = (categories) => {
+        return categories.map((category) => ({ value: category.id, label: category.name }));
+      };      
 
     return (
         <div className='flex flex-col justify-center items-center'>

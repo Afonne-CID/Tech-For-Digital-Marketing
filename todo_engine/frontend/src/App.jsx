@@ -20,8 +20,6 @@ const App = () => {
   const closeCompletedModal = () => setShowCompletedModal(false);
 
   const renderTasks = ({ tasks, bgColor, limit = null }) => {
-    console.log('Tasks:', tasks);
-
     if (!tasks) {
       return null;
     }
@@ -31,9 +29,11 @@ const App = () => {
       slicedTasks = tasks.slice(0, limit);
     }
   
-    return slicedTasks.map((task, index) => (
-      <Task task={task} sn={index} bgColor={bgColor} key={index} onAction={fetchData} />
-    ));
+    return slicedTasks.map((task, index) => {
+      return (
+        <Task task={task} sn={index} bgColor={bgColor} key={index} onAction={fetchData} />
+      )
+  });
   };
   
 
@@ -50,7 +50,6 @@ const App = () => {
   }, [])
 
 
-  {/* <small className='font-italize'>You need to have an account and logged-in to see your tasks after a reload and on your next visit</small> */}
   return (
     <div className='h-screen w-screen bg-gradient-to-br from-[#44D9F9] via-pink-500 to-red-500 flex flex-col justify-center items-center'>
 
@@ -65,8 +64,6 @@ const App = () => {
         </div>
 
         <div className='shadow bg-gradient-to-br from-[#44D9F9] via-pink-400 to-red-400 w-full sm:w-11/12 md:w-10/12 lg:w-8/12 xl:w-6/12 2xl:w-4/12 h-auto sm:h-[75%] flex flex-col justify-center items-center'>
-
-          
           <div className='items-center justify-center h-[100%] w-[100%]'>
               <div className='text-center'>
                   <AddTask onAddTask={fetchData} />
@@ -100,7 +97,7 @@ const App = () => {
                  </Modal>
 
                  {(!incompleteTasks || incompleteTasks.length <= 0) && (
-                    <small>All tasks have been completed, contratulations :)...</small>
+                    <small>All tasks have been completed, congratulations :)...</small>
                   )
                  }
               </div>

@@ -5,6 +5,32 @@ const isAuthenticated = () => {
     return ((localStorage.getItem('token', null) !== null) && (localStorage.getItem('token', null) !== undefined))
 }
 
+const getCategories = async () => {
+    if(isAuthenticated()) {
+        const response = await fetch('/api/categories/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${localStorage.getItem('token', null)}`
+            }
+        })
+
+        if(response.ok) {
+            return await response.json()
+        } else {
+            if(response.status === 401) {
+                localStorage.setItem('token', null)
+                return []
+            }
+
+            throw new Error('Failed to fetch categories')
+        }
+
+    } else {
+        return []
+    }
+}
+
 const deleteTask = async (taskId) => {
     if(isAuthenticated()) {
         const response = await fetch(`${backend_url}/${taskId}`, {
@@ -15,7 +41,12 @@ const deleteTask = async (taskId) => {
             }
         })
 
-        return await response.json()
+        if(!response.ok) {
+            localStorage.setItem('token', null)
+            const tasks = JSON.parse(localStorage.getItem('tasks') || '[]')
+            const updatedTasks = tasks.filter((task) => task.id !== taskId)
+            localStorage.setItem('tasks', JSON.stringify(updatedTasks))
+        }
 
     } else {
         const tasks = JSON.parse(localStorage.getItem('tasks') || '[]')
@@ -26,7 +57,8 @@ const deleteTask = async (taskId) => {
 
 const updateTask = async (taskId, updatedTaskData) => {
     if(isAuthenticated()) {
-        const response = await fetch(`${backend_url}/${taskId}`, {
+        console.log(updatedTaskData.url)
+        const response = await fetch(`${backend_url}/${taskId}/`, {
             method: 'PATCH',
             headers: {
                 "Content-Type": "application/json",
@@ -35,7 +67,16 @@ const updateTask = async (taskId, updatedTaskData) => {
             body: JSON.stringify(updatedTaskData),
         })
 
-        return await response.json()
+        if(response.ok) {
+            return await response.json()
+        } else {
+            if(response.status === 401) {
+                localStorage.setItem('token', null)
+                const tasks = JSON.parse(localStorage.getItem('tasks') || '[]')
+                const updatedTasks = tasks.map((task) => task.id === taskId ? updatedTaskData : task)
+                localStorage.setItem('tasks', JSON.stringify(updatedTasks))
+            }
+        }
 
     } else {
         const tasks = JSON.parse(localStorage.getItem('tasks') || '[]')
@@ -64,7 +105,7 @@ const fetchCompletedTasks = async () => {
 
       if(isAuthenticated()) {
             const queryParams = new URLSearchParams([
-                ['completed', 'True']
+                ['completed', 'true']
             ])
         
             const response = await fetch (`${backend_url}?${queryParams}`, {
@@ -73,7 +114,17 @@ const fetchCompletedTasks = async () => {
                 }
             })
             
-            return await response.json()
+            if(response.ok) {
+                return await response.json()
+            } else {
+                if(response.status === 401) {
+                    localStorage.setItem('token', null)
+                    return fetchFromLocalStorage(true)
+                }
+
+                throw new Error('Failed to fetch completed tasks')
+            }
+
       } else {
         return fetchFromLocalStorage(true)
       }
@@ -84,11 +135,10 @@ const fetchCompletedTasks = async () => {
 }
 
 const fetchIncompleteTasks = async () => {
-
     try {
         if(isAuthenticated()) {
             const queryParams = new URLSearchParams([
-                ['completed', 'False']
+                ['completed', 'false']
             ])
         
             const response = await fetch(`${backend_url}?${queryParams}`, {
@@ -97,7 +147,17 @@ const fetchIncompleteTasks = async () => {
                 }
             })
         
-            return await response.json()
+            if(response.ok) {
+                return await response.json()
+            } else {
+                if(response.status === 401) {
+                    localStorage.setItem('token', null)
+                    return fetchFromLocalStorage(false)
+                }
+
+                throw new Error('Failed to fetch incomplete tasks')
+            }
+
         } else {
             return fetchFromLocalStorage(false)
         }
@@ -113,26 +173,36 @@ const saveToLocalStorage = (taskData) => {
 }
 
 const saveToDatabase = async (taskData, token=null) => {
-    try {
-        if(isAuthenticated()) {
-            const response = await fetch(backend_url, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Token ${token}`,
-                },
-                body: JSON.stringify(taskData)
-            })
-        
-            return await response.json()
+    if(isAuthenticated()) {
+        const response = await fetch(backend_url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Token ${token}`,
+            },
+            body: JSON.stringify(taskData)
+        })
 
+        if(response.ok) {
+            return await response.json()
         } else {
-            saveToLocalStorage(taskData)
+            if(response.status === 401) {
+                localStorage.setItem('token', null)
+                saveToLocalStorage(taskData);
+            }            
         }
 
-    } catch (error) {
-        console.log(error)
+    } else {
+        saveToLocalStorage(taskData)
     }
 }
 
-export { fetchCompletedTasks, fetchIncompleteTasks, saveToDatabase, deleteTask, updateTask, toggleTaskCompletion };
+export { 
+    fetchCompletedTasks, 
+    fetchIncompleteTasks, 
+    saveToDatabase, 
+    deleteTask, 
+    updateTask, 
+    toggleTaskCompletion,
+    getCategories,
+};

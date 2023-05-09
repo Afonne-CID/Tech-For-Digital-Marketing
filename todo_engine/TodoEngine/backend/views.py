@@ -6,8 +6,8 @@ from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from backend.models import Category, Task
-from backend.serializers import (
+from TodoEngine.backend.models import Category, Task
+from TodoEngine.backend.serializers import (
     UserSerializer,
     GroupSerializer,
     CategorySerializer,
@@ -60,10 +60,36 @@ class TaskViewSet(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def query_set(self):
+    def get_queryset(self):
+        try:
+            user = self.request.user
+            completed = self.request.query_params.get('completed', None)
+            if completed is not None:
+                completed = completed.lower() == 'true'
+                return Task.objects.filter(user=user, completed=completed).order_by('created_at')
+            return Task.objects.filter(user=user).order_by('created_at')
+        except Exception as e:
+            print(e)
+            raise e
+
+    def create(self, serializer):
         user = self.request.user
-        completed = self.request.query_params.get('completed', None)
-        if completed is not None:
-            completed = completed.lower() == 'true'
-            return Task.objects.filter(user=user, completed=completed).order_by('created_at')
-        return Task.objects.filter(user=user).order_by('created_at')
+        category_value = self.request.data.get('category', None)
+        category, _ = Category.objects.get_or_create(name='default', user=user)
+        if category_value:
+            try:
+                category_id = int(category_value)
+                category = Category.objects.get(pk=category_id)
+            except ValueError:
+                category, _ = Category.objects.get_or_create(name=category_value, user=user)
+            except Exception as e:
+                raise e
+
+        serializer = self.get_serializer(data=self.request.data)
+
+        if serializer.is_valid():
+            serializer.save(user=user, category=category)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        print("Serializer errors:", serializer.errors)  # Add this line
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

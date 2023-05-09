@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import Select from 'react-select';
 import { updateTask } from '../helpers'
 import Button from './Button'
 
@@ -63,10 +64,11 @@ const UpdateTaskComponent = ({ task, onAction }) => {
                     <Button title='CLOSE'
                         buttonColor='bg-red-500'
                         onClick={() => {
-                            setTaskTitle('');
-                            setTaskDescription('');
-                            setTaskCategory('');
-                            setCompleted(false);
+                            onAction();
+                            setTaskTitle('')
+                            setTaskDescription('')
+                            setTaskCategory('')
+                            setCompleted(false)
                         }}
                     />
                 </div>
